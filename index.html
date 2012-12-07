@@ -2,30 +2,16 @@
 <html>
   <head>
     <title>Lisp Interpreter</title>
-    <style>
-      body{
-        color:white;
-        background:black;
-      }
-      .console{
-        font-family:Courier;
-        padding:10px;
-      }
-      input#cmd{
-        padding:5px;
-        background:transparent;
-        border:none;
-        border-left:3px solid white;
-        height:1em;
-        color:white;
-        font-size:1em;
-        width:100%;
-      }
+    <link rel="stylesheet" href="style.css">
     </style>
     <script src="lisp.js"></script>
   </head>
   <body>
+    <h2>Lisp Interpreter</h2>
     <div class="console">
+      <textarea readonly id="output">Test</textarea>
+      <p class="clear">&nbsp;</p>
+      <label for="cmd">&raquo;&nbsp;</label>
       <input id="cmd" type="text" autofocus>
     </div>
   </body>

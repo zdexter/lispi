@@ -1,0 +1,49 @@
+body{
+  color:white;
+  background:black;
+  text-align:center;
+  font-family:Courier;
+}
+h2{
+  margin:0px auto;
+}
+label,.clear{
+  padding:0;
+  margin:0;
+}
+label,input{
+  height:30px;
+}
+label{
+  float:left;
+  color:green;
+  font-size:2em;
+  max-width:4%;
+}
+.clear{
+  clear:both;
+}
+.console{
+  padding:10px;
+}
+input,textarea{
+  color:white;
+  font-size:1em;
+}
+textarea#output{
+  background:transparent;
+  width:100%;
+  margin:0;
+  padding:0;
+  border:0;
+  height:300px;
+}
+input#cmd{
+  float:left;
+  padding:5px;
+  margin:0;
+  background:transparent;
+  border:none;
+  width:94%;
+  border-bottom:1px solid white;
+}
