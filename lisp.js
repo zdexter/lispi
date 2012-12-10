@@ -42,22 +42,63 @@ Parser.prototype.atom = function(token) {
   return token;
 }
 
-var GlobalEnv = {
-  "+": function() {
-    var args = Array.prototype.slice.call(arguments);
-    return args.reduce(function (x, y) {
-      return x + y;
-    });
+var arithmetic = {
+  "+": function(op1, op2) {
+    return op1 + op2;
+  },
+  "-": function(op1, op2) {
+    return op1 - op2;
+  },
+  "*": function(op1, op2) {
+    return op1 * op2;
+  },
+  "/": function(op1, op2) {
+    return op1 / op2;
   }
 }
 
+stack = []
 var eval = function(ast) {
-  
+  // recursively append things to stack
+  // on the way back up, evaluate when we encounter an operator
+  // recursively apply operator to top of stack
+  //
+  // Must know results of child expressions before we can eval parent
+  if (ast[0] > 0) {
+    return parseInt(ast[0]);
+  }
+  if (arithmetic.hasOwnProperty(ast[0])) {
+    console.log('**** NEW CALL ****');
+    var left = ast[1];
+    var right = ast[2];
+    var func = arithmetic[ast[0]];
+    console.log('func was ' + ast[0]);
+
+    console.log('left was ' + left);
+    var left_eval = eval(left);
+    console.log('eval(left) was ' + left_eval)
+
+    console.log('right was ' + right);
+    var right_eval = eval(right);
+    console.log('eval(right) was ' + right_eval)
+
+    var result = func(left_eval, right_eval);
+    console.log(func);
+    console.log(left_eval);
+    console.log(right_eval);
+    console.log('result was ' + result);
+    return result;
+  } else if (ast[0] == 'quote') {
+  } else if (ast[0] == 'if') {
+  } else if (ast[0] == 'set!') {
+  } else if (ast[0] == 'defined') {
+  } else if (ast[0] == 'lambda') {
+  } else if (ast[0] == 'begin') {
+  } 
 }
 
 var interpret = function(strn){
-  // Turn strn into series of lists
-  p = new Parser('(+ 2 (* 5 6))');
-  console.log(eval(p.ast));
+  p = new Parser(strn); // Turn strn into series of lists
+  return eval(p.ast);
 }
-interpret();
+interpret('(+ 2 (* 5 6))');
