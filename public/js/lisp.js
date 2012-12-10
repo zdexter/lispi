@@ -20,6 +20,9 @@ Parser.prototype.lex = function(s) {
 
 Parser.prototype.parse = function(tokens) {
   var current = tokens.shift();
+  if (typeof(current) == 'undefined') {
+    throw 'Parse error: expected token, got nothing';
+  }
   if (current === '(') {
     var stack = [];
     while (tokens[0] !== ')') {
@@ -99,6 +102,9 @@ var eval = function(ast) {
 
 var interpret = function(strn){
   p = new Parser(strn); // Turn strn into series of lists
-  return eval(p.ast);
+  if (p.ast) {
+    return eval(p.ast);
+  }
+  console.log('Could not create ast');
 }
 interpret('(+ 2 (* 5 6))');
