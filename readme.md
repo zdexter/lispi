@@ -13,6 +13,8 @@ http://polar-shore-4611.herokuapp.com
 
 (+ 2 (* 5 6)) => 32
 
+(+ (+ 2 (+ 1 2)) (* (+ 1 2) (+ 1 2))) => (+ 5 9) => 14
+
 ## Usage
 
     bundle install
