@@ -18,7 +18,7 @@ $('#cmd').keyup(function(event) {
       } else {
         history.push(inp);
       }
-      historyIndex = history.length-1; // reset user's search position in history buffer
+      historyIndex = history.length; // reset user's search position in history buffer
     } catch (err) {
       $(out_to).append(">> "+err+"\n");
     }
@@ -27,28 +27,21 @@ $('#cmd').keyup(function(event) {
       $(inp_from).val('');
     }
   } else if (event.keyCode == 38) { // up
-    console.log('up ' + historyIndex);
-    console.log(history);
     if (historyIndex >= 0) {
-      if (typeof(history[historyIndex]) != 'undefined') {
-        $(inp_from).val(history[historyIndex]);
         if (historyIndex > 0) {
           historyIndex--;
         }
+      if (typeof(history[historyIndex]) != 'undefined') {
+        $(inp_from).val(history[historyIndex]);
       }
     }
   } else if (event.keyCode == 40) { // down
-    console.log('down ' + historyIndex);
-    console.log(history);
-    if (historyIndex <= history.length) {
-      if (historyIndex == 0) {
-        historyIndex++;
-      }
-      if (typeof(history[historyIndex]) != 'undefined') {
-        $(inp_from).val(history[historyIndex]);
+    if (historyIndex < history.length) {
         if (historyIndex < history.length-1) {
           historyIndex++;
         }
+      if (typeof(history[historyIndex]) != 'undefined') {
+        $(inp_from).val(history[historyIndex]);
       }
     }
   }
