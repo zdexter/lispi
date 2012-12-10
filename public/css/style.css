@@ -29,7 +29,11 @@ label{
 .help .title{
   font-weight:bold;
 }
-.help{text-align:left;padding:50px;}
+.help{
+  float:left;
+  text-align:left;
+  padding-left:50px;
+}
 
 // Form styles
 textarea{

@@ -63,57 +63,77 @@ var arithmetic = {
   }
 }
 
-stack = []
+symbolTable = {}
 var eval = function(ast) {
-  // recursively append things to stack
-  // on the way back up, evaluate when we encounter an operator
-  // recursively apply operator to top of stack
-  //
-  // Must know results of child expressions before we can eval parent
-
   // Types and symbols
- 
-  console.log('ast beginning ' + ast);
-  if (!Array.isArray(ast) && parseInt(ast) > 0) {
+   
+  console.log('***** Called eval() with ast ' + ast + ' of type ' + typeof(ast));
+  if (parseInt(ast) > 0) {
+    console.log ('>>>>> Returned ' + parseInt(ast));
     return parseInt(ast);
   }
+  switch(typeof(ast)) {
+    case 'string':
+      if (typeof(symbolTable[ast]) != 'undefined') {
+        appendOutput(ast + ' is ' + symbolTable[ast]);
+      }
+      console.log('>>>>> Returned ' + ast);
+      return ast;
+  }
 
+  if (typeof(ast) === 'undefined') {
+    throw('Unexpected token');
+  }
   if (arithmetic.hasOwnProperty(ast[0])) {
-    console.log('matched arith. ast was ' + ast);
     var func = arithmetic[ast.shift()];
-    console.log('**** ' + func + ' ****');
-    var left = ast.shift();
-    var right = ast;
   } else if (ast[0] == 'quote') {
   } else if (ast[0] == 'if') {
   } else if (ast[0] == 'set!') {
+    ast.shift();
+    var func = function(symbol_name, value) {
+      if (parseInt(symbol_name) > 0) {
+        throw('Error: Symbols must be strings.');
+      }
+      symbolTable[symbol_name] = value;
+      console.log("Set " + symbol_name + " to " + value);
+      return true;
+    }
   } else if (ast[0] == 'defined') {
   } else if (ast[0] == 'lambda') {
   } else if (ast[0] == 'begin') {
   } 
+  
+  if (typeof(func) === 'undefined') {
+    throw('Invalid function name: ' + ast[0]);
+    return empty;
+  }
+
+  var left = ast.shift();
+  var right = ast;
 
   console.log('left was ' + left);
   var left_eval = eval(left);
   console.log('eval(left) was ' + left_eval)
 
   if (Array.isArray(right)) {
-    right = right[0];
+    right = ast.shift();
   }
   console.log('right was ' + right);
   var right_eval = eval(right);
   console.log('eval(right) was ' + right_eval)
 
   var result = func(left_eval, right_eval);
-  console.log(func);
-  console.log(left_eval);
-  console.log(right_eval);
-  console.log('result was ' + result);
+  //console.log(func);
+  //console.log(left_eval);
+  //console.log(right_eval);
+  console.log('Result:' + result);
   return result;
 }
 
 var interpret = function(strn){
   p = new Parser(strn); // Turn strn into series of lists
   if (p.ast) {
+    console.log('Starting eval()');
     return eval(p.ast);
   }
   console.log('Could not create ast');

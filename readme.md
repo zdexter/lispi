@@ -7,13 +7,6 @@ An in-browser Lisp interpreter (for a subset of Scheme)
 
 http://polar-shore-4611.herokuapp.com
 
-## Examples (more coming soon)
-
-(+ 2 3) => 5
-
-(+ 2 (* 5 6)) => 32
-
-(+ (+ 2 (+ 1 2)) (* (+ 1 2) (+ 1 2))) => (+ 5 9) => 14
 
 ## Usage
 
@@ -25,3 +18,13 @@ http://polar-shore-4611.herokuapp.com
 Up and down for history
 
 Enter to interpret
+
+## Examples (more coming soon)
+
+(+ 2 3) => 5
+
+(+ 2 (* 5 6)) => 32
+
+(+ (+ 2 (+ 1 2)) (* (+ 1 2) (+ 1 2))) => (+ 5 9) => 14
+
+(set! somevar 5) => somevar is 5

@@ -1,15 +1,19 @@
 var history = []
 var historyIndex = 0;
+var empty = 'empty'; // indicates when we shouldn't print subtree
+
+var appendOutput = function(output) {
+  if (output === 'empty') return;
+  var out_to = $('#output');
+  $(out_to).append(output + '\n');
+  $(out_to).scrollTop($(out_to)[0].scrollHeight);
+}
 
 $('#cmd').keyup(function(event) {
   var inp_from = $('#cmd');
   var inp = $(inp_from).val();
-  var out_to = $('#output');
   if (event.keyCode == 13) {
-    $(out_to).append(inp+'\n');
-    
-    $(out_to).scrollTop($(out_to)[0].scrollHeight);
-
+    appendOutput('>> ' + inp);
     try {
       var out = interpret(inp);
       if (history.length > 10) {
@@ -20,9 +24,10 @@ $('#cmd').keyup(function(event) {
       }
       historyIndex = history.length; // reset user's search position in history buffer
     } catch (err) {
-      $(out_to).append(">> "+err+"\n");
+      appendOutput(err);
+      return;
     }
-    $(out_to).append('>> ' + interpret(inp) + '\n');
+    appendOutput(out);
     $(inp_from).val('');
   } else if (event.keyCode == 38) { // up
     if (historyIndex >= 0) {
