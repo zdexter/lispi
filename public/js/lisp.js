@@ -107,4 +107,3 @@ var interpret = function(strn){
   }
   console.log('Could not create ast');
 }
-interpret('(+ 2 (* 5 6))');

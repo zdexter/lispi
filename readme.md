@@ -17,3 +17,9 @@ http://polar-shore-4611.herokuapp.com
 
     bundle install
     rackup
+
+### Controls
+
+Up and down for history
+
+Enter to interpret

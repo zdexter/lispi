@@ -26,6 +26,9 @@ label{
 .console{
   padding:10px;
 }
+.help .title{
+  font-weight:bold;
+}
 .help{text-align:left;padding:50px;}
 
 // Form styles
