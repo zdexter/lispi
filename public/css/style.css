@@ -1,6 +1,6 @@
 body{
   color:white;
-  background:black;
+  background:#222;
   text-align:center;
   font-family:Courier;
 }
@@ -26,9 +26,17 @@ label{
 .console{
   padding:10px;
 }
+
+.help{text-align:left;padding:50px;}
+
+// Form styles
+textarea{
+  resize:none;
+}
 input,textarea{
   color:white;
   font-size:1em;
+  outline:none;
 }
 textarea#output{
   background:transparent;

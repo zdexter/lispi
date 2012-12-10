@@ -3,5 +3,6 @@ $('#cmd').keyup(function(event) {
     var inp = $('#cmd').val();
     $('#output').append(inp+'\n');
     $('#output').append('>> ' + interpret(inp) + '\n');
+    $('#cmd').val('');
   }
 });
