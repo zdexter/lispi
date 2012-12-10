@@ -22,10 +22,8 @@ $('#cmd').keyup(function(event) {
     } catch (err) {
       $(out_to).append(">> "+err+"\n");
     }
-    if (out) {
-      $(out_to).append('>> ' + interpret(inp) + '\n');
-      $(inp_from).val('');
-    }
+    $(out_to).append('>> ' + interpret(inp) + '\n');
+    $(inp_from).val('');
   } else if (event.keyCode == 38) { // up
     if (historyIndex >= 0) {
         if (historyIndex > 0) {
