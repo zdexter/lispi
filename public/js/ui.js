@@ -14,6 +14,7 @@ $('#cmd').keyup(function(event) {
   var inp = $(inp_from).val();
   if (event.keyCode == 13) {
     appendOutput('>> ' + inp);
+    /*
     try {
       var out = interpret(inp);
       if (history.length > 10) {
@@ -27,6 +28,15 @@ $('#cmd').keyup(function(event) {
       appendOutput(err);
       return;
     }
+    */
+    var out = interpret(inp);
+    if (history.length > 10) {
+      history.shift;
+      history[9] = inp;
+    } else {
+      history.push(inp);
+    }
+    historyIndex = history.length; // reset user's search position in history buffer
     appendOutput(out);
     $(inp_from).val('');
   } else if (event.keyCode == 38) { // up

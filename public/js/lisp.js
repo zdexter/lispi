@@ -82,19 +82,20 @@ var eval = function(ast) {
    
   console.log('***** Called eval() with ast ' + ast + ' of type ' + typeof(ast));
   console.log(ast);
-  if (parseInt(ast) > 0) {
-    console.log ('>>>>> Returned ' + parseInt(ast));
-    return parseInt(ast);
+  if (typeof(ast) != 'object') {
+    if (parseInt(ast) > 0) {
+      console.log ('>>>>> Returned ' + parseInt(ast));
+      return parseInt(ast);
+    }
+    switch(typeof(ast)) {
+      case 'string':
+        if (typeof(symbolTable[ast]) != 'undefined') {
+          ast = symbolTable[ast];
+        }
+        console.log('>>>>> Returned ' + ast);
+        return ast;
+    }
   }
-  switch(typeof(ast)) {
-    case 'string':
-      if (typeof(symbolTable[ast]) != 'undefined') {
-        ast = symbolTable[ast];
-      }
-      console.log('>>>>> Returned ' + ast);
-      return ast;
-  }
-
   if (typeof(ast) === 'undefined') {
     throw('Unexpected token');
   }
@@ -129,6 +130,7 @@ var eval = function(ast) {
       return true;
     }
   } else if (ast[0] == 'lambda') {
+    console.log('LAMBDA');
     // Save function inside lambda for later execution
     ast.shift();
     var varname = ast.shift();
@@ -140,7 +142,6 @@ var eval = function(ast) {
       }
 
       var stored_ast = ast[0]; // Closed over; stores AST with var to replace
-
       return function(arg_val) {
         // Called at execution time; arg_val is actual param to anon func
         var stored_ast_copy = [];
@@ -163,11 +164,6 @@ var eval = function(ast) {
      }
   }
   
-  if (typeof(func) === 'undefined') {
-    throw('Invalid function name: ' + ast[0]);
-    return empty;
-  }
-
   var left = ast.shift();
   var right = ast;
 
@@ -179,11 +175,21 @@ var eval = function(ast) {
     right = ast.shift();
   }
   console.log('right was ' + right + ' with type ' + typeof(right));
-
+  
   if (typeof(right) != 'undefined') {
     var right_eval = eval(right);
-    var result = func(left_eval, right_eval);
     console.log('eval(right) was ' + right_eval)
+    if (typeof(func) != 'undefined') {
+      var result = func(left_eval, right_eval);
+    } else { // pass actual param to anonymous function
+      try {
+        var result = right_eval(left_eval);
+      } catch (err) {
+        var err = 'Not a valid function'
+        appendOutput(err);
+        throw(err);
+      }
+    }
   } else {
     var result = func(left_eval);
   }

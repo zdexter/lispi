@@ -30,3 +30,9 @@ Enter to interpret
 (set! somevar 5) => true (success)
 
 (defined somevar) => somevar is 5; true
+
+(4 (lambda n (+ n 3))) => 7
+
+(define myfunc (lambda n (* n 4))) => true
+
+(myfunc 5) => 20
