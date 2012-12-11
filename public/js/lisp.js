@@ -74,6 +74,9 @@ var eval = function(ast) {
   }
   switch(typeof(ast)) {
     case 'string':
+      if (typeof(symbolTable[ast]) != 'undefined') {
+        ast = symbolTable[ast];
+      }
       console.log('>>>>> Returned ' + ast);
       return ast;
   }
