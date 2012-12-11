@@ -26,6 +26,8 @@ label{
 .console{
   padding:10px;
 }
+
+// Help section
 .help .title{
   font-weight:bold;
 }
@@ -34,6 +36,8 @@ label{
   text-align:left;
   padding-left:50px;
 }
+li{list-style-type:none;}
+li{margin:5px;}
 
 // Form styles
 textarea{

@@ -21,17 +21,23 @@ Enter to interpret
 
 ## Examples (more coming soon)
 
+#### Arithmetic
+
 (+ 2 3) => 5
 
 (+ 2 (* 5 6)) => 32
 
 (+ (+ 2 (+ 1 2)) (* (+ 1 2) (+ 1 2))) => (+ 5 9) => 14
 
+#### Variables
+
 (set! somevar 5) => true (success)
 
-(defined somevar) => somevar is 5; true
+(defined somevar) => somevar is 5 => true
 
 (4 (lambda n (+ n 3))) => 7
+
+#### Named and anonymous functions
 
 (define myfunc (lambda n (* n 4))) => true
 
