@@ -75,11 +75,13 @@ var arithmetic = {
   }
 }
 
-symbolTable = {}
+symbolTable = {} // name: value
+procTable = {} // name: callable
 var eval = function(ast) {
   // Types and symbols
    
   console.log('***** Called eval() with ast ' + ast + ' of type ' + typeof(ast));
+  console.log(ast);
   if (parseInt(ast) > 0) {
     console.log ('>>>>> Returned ' + parseInt(ast));
     return parseInt(ast);
@@ -112,7 +114,6 @@ var eval = function(ast) {
     }
   } else if (ast[0] == 'defined') {
     ast.shift();
-    console.log('got here');
     var func = function(symbol_name) {
       if (typeof(symbolTable[symbol_name]) != 'undefined') {
         appendOutput(symbol_name + ' is ' + symbolTable[symbol_name]);
@@ -120,9 +121,46 @@ var eval = function(ast) {
       }
       return false;
     }
+  } else if (ast[0] == 'define') { // define procedure
+    ast.shift();
+    var func = function(name, func_body) {
+      procTable[name] = func_body;
+      return true;
+    }
   } else if (ast[0] == 'lambda') {
+    // Save function inside lambda for later execution
+    ast.shift();
+    var varname = ast.shift();
+    var func = function(varname, passed_ast) {
+      for (var i=0; i<passed_ast.length; i++) {
+        if (passed_ast[i] === varname) {
+          passed_ast[i] = passed_ast;
+        }
+      }
+
+      var stored_ast = ast[0]; // Closed over; stores AST with var to replace
+
+      return function(arg_val) {
+        // Called at execution time; arg_val is actual param to anon func
+        var stored_ast_copy = [];
+        for (var i=0; i<stored_ast.length; i++) {
+          if (stored_ast[i] === varname) {
+            stored_ast_copy[i] = arg_val;
+          } else {
+            stored_ast_copy[i] = stored_ast[i];
+          }
+        }
+        return eval(stored_ast_copy);
+      }
+    }
+    return func(varname, ast);
   } else if (ast[0] == 'begin') {
-  } 
+  } else {
+    if (typeof(procTable[ast[0]]) != 'undefined') {
+      var func = procTable[ast[0]]; // recall stored procedure
+      ast.shift(); // don't eval function name again
+     }
+  }
   
   if (typeof(func) === 'undefined') {
     throw('Invalid function name: ' + ast[0]);
