@@ -74,9 +74,6 @@ var eval = function(ast) {
   }
   switch(typeof(ast)) {
     case 'string':
-      if (typeof(symbolTable[ast]) != 'undefined') {
-        appendOutput(ast + ' is ' + symbolTable[ast]);
-      }
       console.log('>>>>> Returned ' + ast);
       return ast;
   }
@@ -99,6 +96,15 @@ var eval = function(ast) {
       return true;
     }
   } else if (ast[0] == 'defined') {
+    ast.shift();
+    console.log('got here');
+    var func = function(symbol_name) {
+      if (typeof(symbolTable[symbol_name]) != 'undefined') {
+        appendOutput(symbol_name + ' is ' + symbolTable[symbol_name]);
+        return true;
+      }
+      return false;
+    }
   } else if (ast[0] == 'lambda') {
   } else if (ast[0] == 'begin') {
   } 
@@ -118,11 +124,15 @@ var eval = function(ast) {
   if (Array.isArray(right)) {
     right = ast.shift();
   }
-  console.log('right was ' + right);
-  var right_eval = eval(right);
-  console.log('eval(right) was ' + right_eval)
+  console.log('right was ' + right + ' with type ' + typeof(right));
 
-  var result = func(left_eval, right_eval);
+  if (typeof(right) != 'undefined') {
+    var right_eval = eval(right);
+    var result = func(left_eval, right_eval);
+    console.log('eval(right) was ' + right_eval)
+  } else {
+    var result = func(left_eval);
+  }
   //console.log(func);
   //console.log(left_eval);
   //console.log(right_eval);

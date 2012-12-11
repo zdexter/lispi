@@ -27,4 +27,6 @@ Enter to interpret
 
 (+ (+ 2 (+ 1 2)) (* (+ 1 2) (+ 1 2))) => (+ 5 9) => 14
 
-(set! somevar 5) => somevar is 5
+(set! somevar 5) => true (success)
+
+(defined somevar) => somevar is 5; true
