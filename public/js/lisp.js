@@ -75,8 +75,8 @@ var arithmetic = {
   }
 }
 
-symbolTable = {} // name: value
-procTable = {} // name: callable
+symbolTable = {}; // name: value
+procTable = {}; // name: callable
 var eval = function(ast) {
   // Types and symbols
    
@@ -121,6 +121,7 @@ var eval = function(ast) {
       }
       return false;
     }
+    return func(ast.shift());
   } else if (ast[0] == 'define') { // define procedure
     ast.shift();
     var func = function(name, func_body) {
@@ -186,9 +187,6 @@ var eval = function(ast) {
   } else {
     var result = func(left_eval);
   }
-  //console.log(func);
-  //console.log(left_eval);
-  //console.log(right_eval);
   console.log('Result:' + result);
   return result;
 }
