@@ -5,8 +5,8 @@
 // Utility functions
 
 var stripChar = function(charToStrip, s) {
-  chars = []
-  for (i=0; i < s.length; i++) {
+  var chars = []
+  for (var i=0; i < s.length; i++) {
     if (s[i] != charToStrip) {
       chars.push(s[i]);
     }
@@ -29,7 +29,7 @@ var replace = function(char, source, replace_with) {
     if (source[i] == char) {
       output[i] = replace_with;
     } else {
-      if (!(typeof(source[i]) == 'string') && Array.isArray(source[i])) {
+      if (!(typeof(source[i]) === 'string') && Array.isArray(source[i])) {
         output[i] = replace(char, source[i], replace_with);
       } else {
         output[i] = source[i];
@@ -76,7 +76,7 @@ Parser.prototype.parse = function(tokens) {
 
 var arithmetic = {
   "=": function(op1, op2) {
-    return op1 == op2;
+    return op1 === op2;
   },
   "+": function(op1, op2) {
     return op1 + op2;
@@ -139,7 +139,7 @@ var eval = function(ast) {
       var test = ast.shift();
       var func = function(consequent, alternate) {
         test = eval(test);
-        if (test == true) {
+        if (test === true) {
           return eval(consequent);
         } else {
           return eval(alternate);
@@ -148,12 +148,12 @@ var eval = function(ast) {
       break;
     case 'set!':
       ast.shift();
-      var func = function(symbol_name, value) {
+      var symbol_name = ast.shift(); // Symbol is literal string, not eval'd string
+      var func = function(value) {
         if (parseInt(symbol_name) > 0) {
           throw('Error: Symbols must be strings.');
         }
         symbolTable[symbol_name] = value;
-        console.log("Set " + symbol_name + " to " + value);
         return true;
       }
       break;
