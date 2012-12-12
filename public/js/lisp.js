@@ -197,16 +197,14 @@ var eval = function(ast) {
       }
     }
 
+  // Consume arguments
   var left = ast.shift();
-  var right = ast;
+  var right = ast.shift();
 
   console.log('left was ' + left);
   var left_eval = eval(left);
   console.log('eval(left) was ' + left_eval)
 
-  if (Array.isArray(right)) {
-    right = ast.shift();
-  }
   console.log('right was ' + right + ' with type ' + typeof(right));
 
   if (isDefined(right)) {
