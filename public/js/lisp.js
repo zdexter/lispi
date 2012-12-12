@@ -97,99 +97,106 @@ var eval = function(ast) {
   // Types and symbols
    
   console.log('***** Called eval() with ast ' + ast + ' of type ' + typeof(ast));
-  console.log(ast);
-  if (typeof(ast) != 'object') {
-    if (parseInt(ast) > 0) {
-      console.log ('>>>>> Returned ' + parseInt(ast));
-      return parseInt(ast);
-    }
-    switch(typeof(ast)) {
-      case 'string':
-        if (isDefined(symbolTable[ast])) {
-          ast = symbolTable[ast];
-        }
-        console.log('>>>>> Returned ' + ast);
-        return ast;
-    }
+  switch (typeof(ast)) {
+    case 'object':
+      break;
+    case 'number':
+      return ast;
+    case 'string':
+      if (parseInt(ast) > 0) {
+        return parseInt(ast);
+      }
+      if (isDefined(symbolTable[ast])) {
+        ast = symbolTable[ast];
+      }
+      return ast;
   }
+
   if (isUndefined(ast)) {
     throw('Unexpected token');
   }
-  if (arithmetic.hasOwnProperty(ast[0])) {
-    var func = arithmetic[ast.shift()];
-  } else if (ast[0] == 'quote') {
-  } else if (ast[0] == 'if') {
-    // (if <test> <consequent> <alternate>)
-    ast.shift();
-    var test = ast.shift();
-    var func = function(consequent, alternate) {
-      test = eval(test);
-      if (test == true) {
-        return eval(consequent);
-      } else {
-        return eval(alternate);
+  
+  switch (ast[0]) {
+    case 'if':
+      // (if <test> <consequent> <alternate>)
+      ast.shift();
+      var test = ast.shift();
+      var func = function(consequent, alternate) {
+        test = eval(test);
+        if (test == true) {
+          return eval(consequent);
+        } else {
+          return eval(alternate);
+        }
       }
-    }
-  } else if (ast[0] == 'set!') {
-    ast.shift();
-    var func = function(symbol_name, value) {
-      if (parseInt(symbol_name) > 0) {
-        throw('Error: Symbols must be strings.');
-      }
-      symbolTable[symbol_name] = value;
-      console.log("Set " + symbol_name + " to " + value);
-      return true;
-    }
-  } else if (ast[0] == 'defined') {
-    ast.shift();
-    var func = function(symbol_name) {
-      if (isDefined(symbolTable[symbol_name])) {
-        appendOutput(symbol_name + ' is ' + symbolTable[symbol_name]);
+      break;
+    case 'set!':
+      ast.shift();
+      var func = function(symbol_name, value) {
+        if (parseInt(symbol_name) > 0) {
+          throw('Error: Symbols must be strings.');
+        }
+        symbolTable[symbol_name] = value;
+        console.log("Set " + symbol_name + " to " + value);
         return true;
       }
-      return false;
-    }
-    return func(ast.shift());
-  } else if (ast[0] == 'define') { // define procedure
-    ast.shift();
-    var func = function(name, func_body) {
-      procTable[name] = func_body;
-      return true;
-    }
-  } else if (ast[0] == 'lambda') {
-    // Save function inside lambda for later execution
-    ast.shift();
-    var varname = ast.shift();
-    var func = function(varname, passed_ast) {
-      for (var i=0; i<passed_ast.length; i++) {
-        if (passed_ast[i] === varname) {
-          passed_ast[i] = passed_ast;
+      break;
+    case 'defined':
+      ast.shift();
+      var func = function(symbol_name) {
+        if (isDefined(symbolTable[symbol_name])) {
+          appendOutput(symbol_name + ' is ' + symbolTable[symbol_name]);
+          return true;
         }
+        return false;
       }
-
-      var stored_ast = ast[0]; // Closed over; stores AST with var to replace
-      return function(arg_val) {
-        // Called at execution time; arg_val is actual param to anon func
-        var stored_ast_copy = [];
-        for (var i=0; i<stored_ast.length; i++) {
-          if (stored_ast[i] === varname) {
-            stored_ast_copy[i] = arg_val;
-          } else {
-            stored_ast_copy[i] = stored_ast[i];
+      return func(ast.shift());
+    case 'define': // store procedure
+      ast.shift();
+      var func = function(name, func_body) {
+        procTable[name] = func_body;
+        return true;
+      }
+      break;
+    case 'lambda':
+      // Save function inside lambda for later execution
+      ast.shift();
+      var varname = ast.shift();
+      var func = function(varname, passed_ast) {
+        for (var i=0; i<passed_ast.length; i++) {
+          if (passed_ast[i] === varname) {
+            passed_ast[i] = passed_ast;
           }
         }
-        return eval(stored_ast_copy);
+
+        var stored_ast = ast[0]; // Closed over; stores AST with var to replace
+        return function(arg_val) {
+          // Called at execution time; arg_val is actual param to anon func
+          var stored_ast_copy = [];
+          for (var i=0; i<stored_ast.length; i++) {
+            if (stored_ast[i] === varname) {
+              stored_ast_copy[i] = arg_val;
+            } else {
+              stored_ast_copy[i] = stored_ast[i];
+            }
+          }
+          return eval(stored_ast_copy);
+        }
+      }
+      return func(varname, ast);
+    default:
+      console.log('Called default with ast');
+      console.log(ast);
+      if (arithmetic.hasOwnProperty(ast[0])) {
+        var func = arithmetic[ast.shift()];
+        break;
+      }
+      if (isDefined(procTable[ast[0]])) {
+        var func = procTable[ast[0]]; // recall stored procedure
+        ast.shift(); // don't eval function name again
       }
     }
-    return func(varname, ast);
-  } else if (ast[0] == 'begin') {
-  } else {
-    if (isDefined(procTable[ast[0]])) {
-      var func = procTable[ast[0]]; // recall stored procedure
-      ast.shift(); // don't eval function name again
-     }
-  }
-  
+
   var left = ast.shift();
   var right = ast;
 
