@@ -38,22 +38,20 @@ Parser.prototype.parse = function(tokens) {
   if (isUndefined(current)) {
     throw 'Parse error: expected token, got nothing';
   }
-  if (current === '(') {
-    var stack = new Array;
-    while (tokens[0] !== ')') {
-      stack.push(this.parse(tokens));
-    }
-    tokens.shift(); // pop ')'
-    return stack;
-  } else if (current === ')') {
-    console.log('unexpected )');
-  } else {
-    return this.atom(current);
+  switch(current) {
+    case '(':
+      var stack = new Array;
+      while (tokens[0] !== ')') {
+        stack.push(this.parse(tokens));
+      }
+      tokens.shift(); // pop ')'
+      return stack;
+    case ')':
+      appendOutput('Error: Unexpected )');
+      break;
+    default:
+      return current;
   }
-}
-
-Parser.prototype.atom = function(token) {
-  return token;
 }
 
 // Semantic analysis
