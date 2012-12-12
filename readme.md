@@ -35,9 +35,9 @@ Enter to interpret
 
 (defined somevar) => somevar is 5 => true
 
-(4 (lambda n (+ n 3))) => 7
+#### Anonymous and named functions
 
-#### Named and anonymous functions
+(4 (lambda n (+ n 3))) => 7
 
 (define myfunc (lambda n (* n 4))) => true
 
