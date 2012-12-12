@@ -4,16 +4,6 @@
 
 // Utility functions
 
-var stripChar = function(charToStrip, s) {
-  var chars = []
-  for (var i=0; i < s.length; i++) {
-    if (s[i] != charToStrip) {
-      chars.push(s[i]);
-    }
-  }
-  return chars;
-}
-
 var isUndefined = function(x) {
   return typeof(x) === 'undefined';
 }
@@ -47,8 +37,7 @@ var Parser = function(s) {
 }
 
 Parser.prototype.lex = function(s) {
-  s = s.replace(/\(/g,' ( ').replace(/\)/g,' ) ').split(" ");
-  return stripChar("", s);
+  return s.replace(/\(/g,' ( ').replace(/\)/g,' ) ').match(/[^ ]+/g);
 }
 
 Parser.prototype.parse = function(tokens) {
@@ -58,7 +47,7 @@ Parser.prototype.parse = function(tokens) {
   }
   switch(current) {
     case '(':
-      var stack = new Array;
+      var stack = [];
       while (tokens[0] !== ')') {
         stack.push(this.parse(tokens));
       }
