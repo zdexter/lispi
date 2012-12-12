@@ -208,13 +208,20 @@ var eval = function(ast) {
     right = ast.shift();
   }
   console.log('right was ' + right + ' with type ' + typeof(right));
-  
+
   if (isDefined(right)) {
     var right_eval = eval(right);
-    console.log('eval(right) was ' + right_eval)
-    if (isDefined(func)) {
+  }
+
+  if (isDefined(func)) {
+    if (isDefined(right_eval)) {
       var result = func(left_eval, right_eval);
-    } else { // pass actual param to anonymous function
+    } else {
+      var result = func(left_eval);
+    }
+  } else {
+    if (isDefined(right_eval)) {
+      // Call anonymous function
       try {
         var result = right_eval(left_eval);
       } catch (err) {
@@ -222,10 +229,6 @@ var eval = function(ast) {
         appendOutput(err);
         throw(err);
       }
-    }
-  } else {
-    if (isDefined(func)) {
-      var result = func(left_eval);
     } else {
       return left_eval;
     }
