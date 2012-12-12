@@ -1,3 +1,9 @@
+/*************
+ * Scheme interpreter by Zach Dexter
+ * **********/
+
+// Utility functions
+
 var stripChar = function(charToStrip, s) {
   chars = []
   for (i=0; i < s.length; i++) {
@@ -7,6 +13,15 @@ var stripChar = function(charToStrip, s) {
   }
   return chars;
 }
+
+var isUndefined = function(x) {
+  return typeof(x) === 'undefined';
+}
+var isDefined = function(x) {
+  return !isUndefined(x);
+}
+
+// Lexical analysis
 
 var Parser = function(s) {
   this.tokens = this.lex(s);
@@ -20,7 +35,7 @@ Parser.prototype.lex = function(s) {
 
 Parser.prototype.parse = function(tokens) {
   var current = tokens.shift();
-  if (typeof(current) == 'undefined') {
+  if (isUndefined(current)) {
     throw 'Parse error: expected token, got nothing';
   }
   if (current === '(') {
@@ -41,9 +56,7 @@ Parser.prototype.atom = function(token) {
   return token;
 }
 
-Parser.prototype.atom = function(token) {
-  return token;
-}
+// Semantic analysis
 
 var arithmetic = {
   "=": function(op1, op2) {
@@ -92,14 +105,14 @@ var eval = function(ast) {
     }
     switch(typeof(ast)) {
       case 'string':
-        if (typeof(symbolTable[ast]) != 'undefined') {
+        if (isDefined(symbolTable[ast])) {
           ast = symbolTable[ast];
         }
         console.log('>>>>> Returned ' + ast);
         return ast;
     }
   }
-  if (typeof(ast) === 'undefined') {
+  if (isUndefined(ast)) {
     throw('Unexpected token');
   }
   if (arithmetic.hasOwnProperty(ast[0])) {
@@ -109,9 +122,7 @@ var eval = function(ast) {
     // (if <test> <consequent> <alternate>)
     ast.shift();
     var test = ast.shift();
-    var consequent = ast.shift();
-    var alternate = ast.shift();
-    var func = function(test, consequent, alternate) {
+    var func = function(consequent, alternate) {
       test = eval(test);
       if (test == true) {
         return eval(consequent);
@@ -119,7 +130,6 @@ var eval = function(ast) {
         return eval(alternate);
       }
     }
-    return func(test, consequent, alternate);
   } else if (ast[0] == 'set!') {
     ast.shift();
     var func = function(symbol_name, value) {
@@ -133,7 +143,7 @@ var eval = function(ast) {
   } else if (ast[0] == 'defined') {
     ast.shift();
     var func = function(symbol_name) {
-      if (typeof(symbolTable[symbol_name]) != 'undefined') {
+      if (isDefined(symbolTable[symbol_name])) {
         appendOutput(symbol_name + ' is ' + symbolTable[symbol_name]);
         return true;
       }
@@ -174,7 +184,7 @@ var eval = function(ast) {
     return func(varname, ast);
   } else if (ast[0] == 'begin') {
   } else {
-    if (typeof(procTable[ast[0]]) != 'undefined') {
+    if (isDefined(procTable[ast[0]])) {
       var func = procTable[ast[0]]; // recall stored procedure
       ast.shift(); // don't eval function name again
      }
@@ -192,10 +202,10 @@ var eval = function(ast) {
   }
   console.log('right was ' + right + ' with type ' + typeof(right));
   
-  if (typeof(right) != 'undefined') {
+  if (isDefined(right)) {
     var right_eval = eval(right);
     console.log('eval(right) was ' + right_eval)
-    if (typeof(func) != 'undefined') {
+    if (isDefined(func)) {
       var result = func(left_eval, right_eval);
     } else { // pass actual param to anonymous function
       try {
@@ -207,7 +217,7 @@ var eval = function(ast) {
       }
     }
   } else {
-    if (typeof(func) != 'undefined') {
+    if (isDefined(func)) {
       var result = func(left_eval);
     } else {
       return left_eval;

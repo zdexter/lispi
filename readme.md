@@ -42,3 +42,9 @@ Enter to interpret
 (define myfunc (lambda n (* n 4))) => true
 
 (myfunc 5) => 20
+
+#### Conditionals
+
+(if (= 1 2) (3) (4)) => 4
+
+(/ 20 (if (= (* 7 7) (49)) (2) (5))) => 10
