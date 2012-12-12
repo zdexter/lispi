@@ -21,6 +21,24 @@ var isDefined = function(x) {
   return !isUndefined(x);
 }
 
+var replace = function(char, source, replace_with) {
+  // Recursively replace all instances of char in source
+  // source can be an n-dimensional array
+  var output = [];
+  for (var i=0; i<source.length; i++) {
+    if (source[i] == char) {
+      output[i] = replace_with;
+    } else {
+      if (!(typeof(source[i]) == 'string') && Array.isArray(source[i])) {
+        output[i] = replace(char, source[i], replace_with);
+      } else {
+        output[i] = source[i];
+      }
+    }
+  }
+  return output;
+}
+
 // Lexical analysis
 
 var Parser = function(s) {
@@ -161,30 +179,12 @@ var eval = function(ast) {
       ast.shift();
       var varname = ast.shift();
       var func = function(varname, passed_ast) {
-        for (var i=0; i<passed_ast.length; i++) {
-          if (passed_ast[i] === varname) {
-            passed_ast[i] = passed_ast;
-          }
-        }
-
-        var stored_ast = ast[0]; // Closed over; stores AST with var to replace
         return function(arg_val) {
-          // Called at execution time; arg_val is actual param to anon func
-          var stored_ast_copy = [];
-          for (var i=0; i<stored_ast.length; i++) {
-            if (stored_ast[i] === varname) {
-              stored_ast_copy[i] = arg_val;
-            } else {
-              stored_ast_copy[i] = stored_ast[i];
-            }
-          }
-          return eval(stored_ast_copy);
+          return eval(replace(varname, passed_ast, arg_val));
         }
       }
       return func(varname, ast);
     default:
-      console.log('Called default with ast');
-      console.log(ast);
       if (arithmetic.hasOwnProperty(ast[0])) {
         var func = arithmetic[ast.shift()];
         break;
@@ -229,7 +229,7 @@ var eval = function(ast) {
       return left_eval;
     }
   }
-  console.log('Result:' + result);
+  console.log('Result: ' + result);
   return result;
 }
 
