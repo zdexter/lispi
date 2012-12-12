@@ -46,6 +46,9 @@ Parser.prototype.atom = function(token) {
 }
 
 var arithmetic = {
+  "=": function(op1, op2) {
+    return op1 == op2;
+  },
   "+": function(op1, op2) {
     return op1 + op2;
   },
@@ -103,6 +106,20 @@ var eval = function(ast) {
     var func = arithmetic[ast.shift()];
   } else if (ast[0] == 'quote') {
   } else if (ast[0] == 'if') {
+    // (if <test> <consequent> <alternate>)
+    ast.shift();
+    var test = ast.shift();
+    var consequent = ast.shift();
+    var alternate = ast.shift();
+    var func = function(test, consequent, alternate) {
+      test = eval(test);
+      if (test == true) {
+        return eval(consequent);
+      } else {
+        return eval(alternate);
+      }
+    }
+    return func(test, consequent, alternate);
   } else if (ast[0] == 'set!') {
     ast.shift();
     var func = function(symbol_name, value) {
@@ -130,7 +147,6 @@ var eval = function(ast) {
       return true;
     }
   } else if (ast[0] == 'lambda') {
-    console.log('LAMBDA');
     // Save function inside lambda for later execution
     ast.shift();
     var varname = ast.shift();
@@ -191,7 +207,11 @@ var eval = function(ast) {
       }
     }
   } else {
-    var result = func(left_eval);
+    if (typeof(func) != 'undefined') {
+      var result = func(left_eval);
+    } else {
+      return left_eval;
+    }
   }
   console.log('Result:' + result);
   return result;
